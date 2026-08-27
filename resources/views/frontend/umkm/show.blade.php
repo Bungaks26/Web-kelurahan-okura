@@ -32,6 +32,19 @@
                         </div>
                     @endif
                 </div>
+                @if ($umkm->latitude && $umkm->longitude)
+                    <div class="mt-6 pt-6 border-t border-slate-100">
+                        <p class="text-sm font-semibold text-slate-800 mb-3">Lokasi UMKM</p>
+
+                        <div id="map-umkm"
+                            class="w-full h-72 rounded-xl border border-slate-200 overflow-hidden">
+                        </div>
+
+                        <p class="text-xs text-slate-400 mt-2">
+                            Lokasi berdasarkan titik yang ditentukan oleh pengelola UMKM.
+                        </p>
+                    </div>
+                @endif
 
                 @if ($umkm->no_hp)
                     <a href="https://wa.me/62{{ ltrim($umkm->no_hp, '0') }}?text=Halo,%20saya%20tertarik%20dengan%20{{ urlencode($umkm->nama_usaha) }}"
@@ -58,5 +71,36 @@
             </div>
         @endif
     </div>
+    @push('scripts')
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+        @if ($umkm->latitude && $umkm->longitude)
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const latitude = {{ $umkm->latitude }};
+                const longitude = {{ $umkm->longitude }};
+
+                const map = L.map('map-umkm').setView(
+                    [latitude, longitude],
+                    15
+                );
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+
+                L.marker([latitude, longitude])
+                    .addTo(map)
+                    .bindPopup(`
+                        <strong>{{ $umkm->nama_usaha }}</strong><br>
+                        {{ $umkm->alamat }}
+                    `)
+                    .openPopup();
+            });
+        </script>
+        @endif
+    @endpush
 </section>
 @endsection

@@ -25,7 +25,7 @@ class HeroBannerController extends Controller
         $validated = $request->validate([
             'judul'        => 'nullable|string|max:255',
             'subjudul'     => 'nullable|string|max:500',
-            'gambar'       => 'required|image|mimes:jpg,jpeg,png,webp|max:3072',
+            'gambar'       => 'required|image|mimes:jpg,jpeg,png,webp|max:20480',
             'tombol_teks'  => 'nullable|string|max:50',
             'tombol_link'  => 'nullable|string|max:255',
             'urutan'       => 'nullable|integer|min:0',
@@ -51,7 +51,7 @@ class HeroBannerController extends Controller
         $validated = $request->validate([
             'judul'        => 'nullable|string|max:255',
             'subjudul'     => 'nullable|string|max:500',
-            'gambar'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
+            'gambar'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:20480',
             'tombol_teks'  => 'nullable|string|max:50',
             'tombol_link'  => 'nullable|string|max:255',
             'urutan'       => 'nullable|integer|min:0',

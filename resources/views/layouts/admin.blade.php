@@ -17,7 +17,11 @@
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
                class="fixed lg:static inset-y-0 left-0 z-30 w-64 bg-[#0B1F3A] text-slate-300 transition-transform duration-300 flex flex-col">
             <div class="flex items-center gap-2.5 px-6 h-16 border-b border-white/10">
-                <div class="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold text-xs">TO</div>
+                <div class="w-9 h-9 rounded-lg flex items-center justify-center overflow-hidden">
+                    <img src="{{ asset('images/logo2.png') }}"
+                        alt="Logo Kelurahan Tebing Tinggi Okura"
+                        class="w-full h-full object-contain">
+                </div>
                 <span class="font-bold text-white text-sm">Admin Okura</span>
             </div>
 
@@ -118,13 +122,6 @@
                             'route' => 'admin.pegawai.index',
                             'icon' => 'M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 10-4-4 4 4 0 004 4z',
                             'roles' => ['super_admin'],
-                            'group' => 'Data Pemerintahan',
-                        ],
-                        [
-                            'label' => 'Anggaran',
-                            'route' => 'admin.anggaran.index',
-                            'icon' => 'M9 7h6m0 10v-3m-3 3v-6m-3 6v-9m-2 9h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z',
-                            'roles' => ['super_admin', 'lurah'],
                             'group' => 'Data Pemerintahan',
                         ],
 

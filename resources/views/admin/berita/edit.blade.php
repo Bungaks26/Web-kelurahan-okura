@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="max-w-3xl">
-    <form action="{{ route('admin.berita.update', $berita) }}" method="POST" enctype="multipart/form-data"
+    <form action="{{ route('admin.berita.update', ['berita' => $berita]) }}" method="POST" enctype="multipart/form-data"
           class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 sm:p-8 space-y-5">
         @csrf @method('PUT')
 
@@ -62,10 +62,6 @@
                 Perbarui Berita
             </button>
             {{-- Tambahkan di edit.blade.php masing-masing, dekat tombol submit --}}
-            <a href="{{ route('admin.gallery.index', ['wisata', $wisata->id]) }}"
-            class="px-5 py-2.5 rounded-xl border border-emerald-200 text-emerald-600 text-sm font-medium hover:bg-emerald-50">
-                📷 Kelola Galeri Foto
-            </a>
             <a href="{{ route('admin.berita.index') }}" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50">
                 Batal
             </a>

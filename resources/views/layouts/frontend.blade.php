@@ -26,12 +26,65 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        /* Mencegah flicker pada Alpine.js sebelum JavaScript selesai dirender */
-        [x-cloak] { display: none !important; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        [x-cloak] {
+            display: none !important;
+        }
+
+        /* ================================
+        PAGE TRANSITION
+        ================================ */
+
+        #page-transition {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #FAF9F6;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(8px);
+            transition:
+                opacity 220ms ease,
+                transform 220ms ease;
+        }
+
+        #page-transition.is-leaving {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        body.page-ready main {
+            animation: pageEnter 420ms cubic-bezier(.22, 1, .36, 1);
+        }
+
+        @keyframes pageEnter {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #page-transition,
+            body.page-ready main {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-[#FAF9F6] text-slate-800 antialiased">
+
+    {{-- Page Transition --}}
+    <div id="page-transition"></div>
 
 {{-- ============ EMERGENCY BAR ============ --}}
 @if ($emergencyContacts->count() > 0 || $pengumumanDarurat)
@@ -121,20 +174,98 @@
                 </a>
 
                 <nav class="hidden md:flex items-center gap-8">
-                    @foreach ([
-                        ['label' => 'Profil', 'route' => 'profil'],
-                        ['label' => 'Layanan', 'route' => 'layanan.index'],
-                        ['label' => 'Wisata', 'route' => 'wisata.index'],
-                        ['label' => 'UMKM', 'route' => 'umkm.index'],
-                        ['label' => 'Berita', 'route' => 'berita.index'],
-                        ['label' => 'Agenda', 'route' => 'agenda.index'], // tambahkan ini
-                    ] as $nav)
-                        <a href="{{ route($nav['route']) }}"
-                        :class="scrolled ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-100 hover:text-amber-300'"
-                        class="text-sm font-medium transition-colors">
-                            {{ $nav['label'] }}
-                        </a>
-                    @endforeach
+
+                    {{-- Profil --}}
+                    <a href="{{ route('profil') }}"
+                    :class="scrolled ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-100 hover:text-amber-300'"
+                    class="text-sm font-medium transition-all duration-200 hover:-translate-y-0.5">
+                        Profil
+                    </a>
+
+                    {{-- Layanan --}}
+                    <a href="{{ route('layanan.index') }}"
+                    :class="scrolled ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-100 hover:text-amber-300'"
+                    class="text-sm font-medium transition-all duration-200 hover:-translate-y-0.5">
+                        Layanan
+                    </a>
+
+                    {{-- Informasi Dropdown --}}
+                    <div class="relative" x-data="{ informasiOpen: false }">
+
+                        <button
+                            @click="informasiOpen = !informasiOpen"
+                            @click.away="informasiOpen = false"
+                            :class="scrolled ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-100 hover:text-amber-300'"
+                            class="flex items-center gap-1.5 text-sm font-medium transition-all duration-200 hover:-translate-y-0.5">
+
+                            Informasi
+
+                            <svg
+                                class="w-4 h-4 transition-transform duration-200"
+                                :class="informasiOpen ? 'rotate-180' : ''"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24">
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+
+                        {{-- Dropdown --}}
+                        <div
+                            x-show="informasiOpen"
+                            x-cloak
+                            x-transition
+                            class="absolute left-1/2 -translate-x-1/2 top-full mt-4 w-48
+                                bg-white rounded-xl shadow-xl border border-slate-100
+                                py-2 overflow-hidden">
+
+                            <a href="{{ route('berita.index') }}"
+                            class="block px-5 py-3 text-sm text-slate-600
+                                    hover:bg-slate-50 hover:text-emerald-600 transition">
+                                Berita
+                            </a>
+
+                            <a href="{{ route('agenda.index') }}"
+                            class="block px-5 py-3 text-sm text-slate-600
+                                    hover:bg-slate-50 hover:text-emerald-600 transition">
+                                Agenda
+                            </a>
+
+                            <a href="{{ route('pengumuman.index') }}"
+                            class="block px-5 py-3 text-sm text-slate-600
+                                    hover:bg-slate-50 hover:text-emerald-600 transition">
+                                Pengumuman
+                            </a>
+
+                        </div>
+                    </div>
+
+                    {{-- Wisata --}}
+                    <a href="{{ route('wisata.index') }}"
+                    :class="scrolled ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-100 hover:text-amber-300'"
+                    class="text-sm font-medium transition-all duration-200 hover:-translate-y-0.5">
+                        Wisata
+                    </a>
+
+                    {{-- UMKM --}}
+                    <a href="{{ route('umkm.index') }}"
+                    :class="scrolled ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-100 hover:text-amber-300'"
+                    class="text-sm font-medium transition-all duration-200 hover:-translate-y-0.5">
+                        UMKM
+                    </a>
+
+                    {{-- Galeri --}}
+                    <a href="{{ route('galeri.index') }}"
+                    :class="scrolled ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-100 hover:text-amber-300'"
+                    class="text-sm font-medium transition-all duration-200 hover:-translate-y-0.5">
+                        Galeri
+                    </a>
+
                 </nav>
 
                 <a href="{{ route('pengaduan.create') }}"
@@ -154,18 +285,87 @@
         {{-- Mobile Menu --}}
         <div x-show="open" x-cloak x-transition class="md:hidden bg-white shadow-lg border-t border-slate-100">
             <div class="px-4 py-4 space-y-1">
-                @foreach ([
-                    ['label' => 'Profil', 'route' => 'profil'],
-                    ['label' => 'Layanan Surat', 'route' => 'layanan.index'],
-                    ['label' => 'Wisata', 'route' => 'wisata.index'],
-                    ['label' => 'UMKM', 'route' => 'umkm.index'],
-                    ['label' => 'Berita', 'route' => 'berita.index'],
-                    ['label' => 'Lapor Pengaduan', 'route' => 'pengaduan.create'],
-                ] as $nav)
-                    <a href="{{ route($nav['route']) }}" class="block px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 text-sm font-medium">
-                        {{ $nav['label'] }}
-                    </a>
-                @endforeach
+
+                <a href="{{ route('profil') }}"
+                class="block px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 text-sm font-medium">
+                    Profil
+                </a>
+
+                <a href="{{ route('layanan.index') }}"
+                class="block px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 text-sm font-medium">
+                    Layanan
+                </a>
+
+                {{-- Informasi --}}
+                <div x-data="{ informasiMobileOpen: false }">
+
+                    <button
+                        @click="informasiMobileOpen = !informasiMobileOpen"
+                        class="w-full flex items-center justify-between px-3 py-2.5
+                            rounded-lg text-slate-700 hover:bg-slate-50
+                            text-sm font-medium">
+
+                        <span>Informasi</span>
+
+                        <svg
+                            class="w-4 h-4 transition-transform"
+                            :class="informasiMobileOpen ? 'rotate-180' : ''"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+
+                    <div
+                        x-show="informasiMobileOpen"
+                        x-cloak
+                        x-transition
+                        class="ml-3 mt-1 space-y-1">
+
+                        <a href="{{ route('berita.index') }}"
+                        class="block px-3 py-2 rounded-lg text-sm text-slate-500 hover:bg-slate-50 hover:text-emerald-600">
+                            Berita
+                        </a>
+
+                        <a href="{{ route('agenda.index') }}"
+                        class="block px-3 py-2 rounded-lg text-sm text-slate-500 hover:bg-slate-50 hover:text-emerald-600">
+                            Agenda
+                        </a>
+
+                        <a href="{{ route('pengumuman.index') }}"
+                        class="block px-3 py-2 rounded-lg text-sm text-slate-500 hover:bg-slate-50 hover:text-emerald-600">
+                            Pengumuman
+                        </a>
+
+                    </div>
+                </div>
+
+                <a href="{{ route('wisata.index') }}"
+                class="block px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 text-sm font-medium">
+                    Wisata
+                </a>
+
+                <a href="{{ route('umkm.index') }}"
+                class="block px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 text-sm font-medium">
+                    UMKM
+                </a>
+
+                <a href="{{ route('galeri.index') }}"
+                class="block px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 text-sm font-medium">
+                    Galeri
+                </a>
+
+                <a href="{{ route('pengaduan.create') }}"
+                class="block px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 text-sm font-medium">
+                    Lapor Pengaduan
+                </a>
+
             </div>
         </div>
     </header>
@@ -369,3 +569,88 @@
     @stack('scripts')
 </body>
 </html>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+            (function () {
+
+                function resetPageTransition() {
+                    const transition = document.getElementById('page-transition');
+
+                    if (transition) {
+                        transition.classList.remove('is-leaving');
+                    }
+
+                    document.body.classList.add('page-ready');
+                }
+
+                // Saat halaman pertama kali dibuka
+                document.addEventListener('DOMContentLoaded', function () {
+
+                    resetPageTransition();
+
+                    const transition = document.getElementById('page-transition');
+
+                    if (!transition) {
+                        return;
+                    }
+
+                    document.querySelectorAll('a[href]').forEach(function (link) {
+
+                        link.addEventListener('click', function (event) {
+
+                            const href = this.getAttribute('href');
+
+                            if (
+                                !href ||
+                                href.startsWith('#') ||
+                                href.startsWith('javascript:') ||
+                                href.startsWith('mailto:') ||
+                                href.startsWith('tel:') ||
+                                this.target === '_blank' ||
+                                event.ctrlKey ||
+                                event.metaKey ||
+                                event.shiftKey ||
+                                event.altKey
+                            ) {
+                                return;
+                            }
+
+                            const url = new URL(href, window.location.origin);
+
+                            // Jangan animasikan link ke website lain
+                            if (url.origin !== window.location.origin) {
+                                return;
+                            }
+
+                            // Jangan animasikan kalau tetap di halaman yang sama
+                            if (
+                                url.pathname === window.location.pathname &&
+                                url.search === window.location.search
+                            ) {
+                                return;
+                            }
+
+                            event.preventDefault();
+
+                            transition.classList.add('is-leaving');
+
+                            setTimeout(function () {
+                                window.location.href = href;
+                            }, 220);
+
+                        });
+
+                    });
+
+                });
+
+                // ==========================================
+                // FIX BROWSER BACK / FORWARD
+                // ==========================================
+                window.addEventListener('pageshow', function () {
+                    resetPageTransition();
+                });
+
+            })();
+    });
+</script>

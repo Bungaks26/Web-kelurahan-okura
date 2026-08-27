@@ -18,7 +18,7 @@
 
             <h1 class="text-4xl sm:text-5xl font-bold text-[#151515] tracking-tight"
                 style="font-family: 'Plus Jakarta Sans', sans-serif;">
-                Agenda & Kegiatan Tebing Tinggi Okura
+                Agenda Tebing Tinggi Okura
             </h1>
 
             <p class="mt-4 max-w-2xl mx-auto text-sm sm:text-base text-slate-500 leading-relaxed">

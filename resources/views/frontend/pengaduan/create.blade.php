@@ -6,7 +6,7 @@
 <section class="pt-28 pb-16 bg-slate-50 min-h-screen">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="text-center mb-8">
-            <span class="inline-block px-3 py-1 rounded-full bg-[#009B3A]/10 text-[#009B3A] text-xs font-semibold mb-3">
+            <span class="inline-block px-4 py-1.5 rounded-full bg-[#009B3A]/10 text-[#009B3A] text-sm font-semibold mb-3">
                 Pengaduan Warga
             </span>
             <h1 class="text-4xl sm:text-5xl font-bold text-[#151515] tracking-tight" style="font-family: 'Plus Jakarta Sans', sans-serif;">

@@ -27,7 +27,7 @@ class GaleriController extends Controller
     {
         $validated = $request->validate([
             'judul'            => 'required|string|max:255',
-            'foto'             => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'foto'             => 'required|image|mimes:jpg,jpeg,png,webp|max:20480',
             'kategori'         => 'required|in:kegiatan,fasilitas,wisata',
             'tanggal_kegiatan' => 'nullable|date',
         ]);

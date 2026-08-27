@@ -135,20 +135,62 @@
             </form>
         </div>
 
-        {{-- Live Counter --}}
+        {{-- ================= LIVE COUNTER ================= --}}
         <div class="mt-12 mb-6 grid grid-cols-3 gap-4 max-w-lg mx-auto">
-            <div class="text-center" x-data="{ val: 0 }" x-init="if (counted) { let t = setInterval(() => { val += 89; if (val >= 5342) { val = 5342; clearInterval(t); } }, 15) }">
-                <p class="text-2xl sm:text-3xl font-bold text-[#FFE600]" x-text="val.toLocaleString('id-ID')"></p>
-                <p class="text-xs sm:text-sm text-white/80 mt-1">Jumlah Penduduk</p>
+
+            {{-- Jumlah Penduduk --}}
+            <div
+                x-data="counter({{ (int) $jumlahPenduduk }}, true)"
+                x-intersect.once="start()"
+                class="text-center opacity-0 translate-y-3 transition-all duration-700"
+                :class="started ? 'opacity-100 translate-y-0' : ''"
+            >
+                <p
+                    class="text-2xl sm:text-3xl font-bold text-[#FFE600] tabular-nums"
+                    x-text="displayValue"
+                ></p>
+
+                <p class="text-xs sm:text-sm text-white/80 mt-1">
+                    Jumlah Penduduk
+                </p>
             </div>
-            <div class="text-center" x-data="{ val: 0 }" x-init="if (counted) { let t = setInterval(() => { val += 1; if (val >= 12) { val = 12; clearInterval(t); } }, 80) }">
-                <p class="text-2xl sm:text-3xl font-bold text-[#FFE600]" x-text="val"></p>
-                <p class="text-xs sm:text-sm text-white/80 mt-1">Destinasi Wisata</p>
+
+
+            {{-- Destinasi Wisata --}}
+            <div
+                x-data="counter({{ (int) $jumlahWisata }}, false)"
+                x-intersect.once="start()"
+                class="text-center opacity-0 translate-y-3 transition-all duration-700 delay-100"
+                :class="started ? 'opacity-100 translate-y-0' : ''"
+            >
+                <p
+                    class="text-2xl sm:text-3xl font-bold text-[#FFE600] tabular-nums"
+                    x-text="displayValue"
+                ></p>
+
+                <p class="text-xs sm:text-sm text-white/80 mt-1">
+                    Destinasi Wisata
+                </p>
             </div>
-            <div class="text-center" x-data="{ val: 0 }" x-init="if (counted) { let t = setInterval(() => { val += 2; if (val >= 48) { val = 48; clearInterval(t); } }, 30) }">
-                <p class="text-2xl sm:text-3xl font-bold text-[#FFE600]" x-text="val"></p>
-                <p class="text-xs sm:text-sm text-white/80 mt-1">UMKM Terdaftar</p>
+
+
+            {{-- UMKM --}}
+            <div
+                x-data="counter({{ (int) $jumlahUmkm }}, false)"
+                x-intersect.once="start()"
+                class="text-center opacity-0 translate-y-3 transition-all duration-700 delay-200"
+                :class="started ? 'opacity-100 translate-y-0' : ''"
+            >
+                <p
+                    class="text-2xl sm:text-3xl font-bold text-[#FFE600] tabular-nums"
+                    x-text="displayValue"
+                ></p>
+
+                <p class="text-xs sm:text-sm text-white/80 mt-1">
+                    UMKM Terdaftar
+                </p>
             </div>
+
         </div>
     </div>
 </section>
@@ -175,6 +217,85 @@
                 <p class="text-xs text-slate-500 mt-1">{{ $link['desc'] }}</p>
             </a>
         @endforeach
+    </div>
+</section>
+
+{{-- ================= PENGUMUMAN ================= --}}
+<section class="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+    <div class="flex items-end justify-between mb-8">
+        <div>
+            <span class="text-[#E31E24] font-semibold text-sm uppercase tracking-wide">
+                Informasi Resmi
+            </span>
+
+            <h2 class="text-3xl font-bold text-[#151515] mt-2"
+                style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                Pengumuman Kelurahan
+            </h2>
+
+            <p class="text-sm text-slate-500 mt-2">
+                Informasi dan pemberitahuan terbaru dari Kelurahan Tebing Tinggi Okura.
+            </p>
+        </div>
+
+        <a href="{{ route('pengumuman.index') }}"
+           class="hidden sm:block text-[#009B3A] font-medium text-sm hover:underline">
+            Lihat Semua →
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        @forelse ($pengumumans ?? [] as $pengumuman)
+
+            <a href="{{ route('pengumuman.show', $pengumuman->id) }}"
+               class="group bg-white rounded-2xl border border-slate-100 shadow-md
+                      hover:shadow-xl transition-all duration-300 p-6">
+
+                <div class="flex items-start justify-between gap-3 mb-4">
+
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full
+                                 bg-emerald-50 text-emerald-700 text-xs font-semibold">
+                        {{ ucfirst($pengumuman->kategori) }}
+                    </span>
+
+                    <span class="text-xs text-slate-400">
+                        {{ \Carbon\Carbon::parse($pengumuman->tanggal_mulai)->translatedFormat('d F Y') }}
+                    </span>
+
+                </div>
+
+                <h3 class="font-semibold text-slate-800 text-lg
+                           group-hover:text-[#009B3A] transition-colors">
+                    {{ $pengumuman->judul }}
+                </h3>
+
+                <p class="text-sm text-slate-500 mt-2 line-clamp-3 leading-relaxed">
+                    {{ $pengumuman->isi }}
+                </p>
+
+                <div class="mt-5 text-sm font-medium text-[#009B3A]">
+                    Baca Selengkapnya →
+                </div>
+
+            </a>
+
+        @empty
+
+            <div class="md:col-span-3 text-center py-10">
+                <p class="text-sm text-slate-400">
+                    Belum ada pengumuman terbaru.
+                </p>
+            </div>
+
+        @endforelse
+    </div>
+
+    {{-- Tombol lihat semua untuk mobile --}}
+    <div class="mt-6 text-center sm:hidden">
+        <a href="{{ route('pengumuman.index') }}"
+           class="inline-block text-[#009B3A] font-medium text-sm hover:underline">
+            Lihat Semua Pengumuman →
+        </a>
     </div>
 </section>
 
@@ -207,19 +328,54 @@
         </div>
 
         {{-- Card: Berita Terbaru --}}
-        <div class="bg-white rounded-2xl shadow-md p-6 border border-slate-100">
-            <h3 class="font-semibold text-slate-800 mb-2">📰 Berita Terbaru</h3>
-            <p class="text-xs text-slate-500">Update kegiatan dan agenda kelurahan.</p>
-            <a href="{{ route('berita.index') }}" class="inline-block mt-3 text-emerald-600 text-sm font-medium hover:underline">
-                Lihat Semua →
-            </a>
-        </div>
+        <div class="md:col-span-2 bg-white rounded-2xl shadow-md p-6 border border-slate-100">
 
-        {{-- Card: Transparansi --}}
-        <div class="bg-[#FFE600]/10 rounded-2xl shadow-md p-6 border border-[#FFE600]/30">
-            <h3 class="font-semibold text-[#8A7600] mb-2">📊 Transparansi Anggaran</h3>
-            <p class="text-xs text-[#8A7600]">Lihat rincian penggunaan dana kelurahan.</p>
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="font-semibold text-slate-800 text-lg">
+                    📰 Berita Terbaru
+                </h3>
+
+                <a href="{{ route('berita.index') }}"
+                class="text-sm font-medium text-emerald-600 hover:text-emerald-700 hover:underline">
+                    Lihat Semua →
+                </a>
+            </div>
+
+            <div class="space-y-3">
+
+                {{-- Berita 1 --}}
+                <a href="{{ route('berita.index') }}"
+                class="flex items-center justify-between gap-4 p-3 rounded-xl hover:bg-slate-50 transition">
+                    <div class="min-w-0">
+                        <p class="text-sm font-medium text-slate-700 truncate">
+                            Kegiatan Kelurahan Tebing Tinggi Okura
+                        </p>
+                        <p class="text-xs text-slate-400 mt-1">
+                            26 Agustus 2026
+                        </p>
+                    </div>
+
+                    <span class="text-slate-300">→</span>
+                </a>
+
+                {{-- Berita 2 --}}
+                <a href="{{ route('berita.index') }}"
+                class="flex items-center justify-between gap-4 p-3 rounded-xl hover:bg-slate-50 transition">
+                    <div class="min-w-0">
+                        <p class="text-sm font-medium text-slate-700 truncate">
+                            Informasi Pelayanan Kelurahan
+                        </p>
+                        <p class="text-xs text-slate-400 mt-1">
+                            24 Agustus 2026
+                        </p>
+                    </div>
+
+                    <span class="text-slate-300">→</span>
+                </a>
+            </div>
+
         </div>
+        
     </div>
 </section>
 
@@ -294,6 +450,81 @@
 
 </section>
 
+{{-- ================= GALERI KEGIATAN ================= --}}
+<section class="bg-[#F8F8F6] py-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+
+        <div class="flex items-end justify-between mb-8">
+            <div>
+                <span class="text-[#E31E24] font-semibold text-sm uppercase tracking-wide">
+                    Dokumentasi
+                </span>
+
+                <h2 class="text-3xl font-bold text-[#151515] mt-2"
+                    style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                    Galeri Kegiatan
+                </h2>
+
+                <p class="text-sm text-slate-500 mt-2">
+                    Dokumentasi kegiatan dan aktivitas Kelurahan Tebing Tinggi Okura.
+                </p>
+            </div>
+
+            <a href="{{ route('galeri.index') }}"
+               class="hidden sm:block text-[#009B3A] font-medium text-sm hover:underline">
+                Lihat Semua →
+            </a>
+        </div>
+
+        {{-- Grid Galeri --}}
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+
+            @forelse ($galeris ?? [] as $galeri)
+
+                <a href="{{ route('galeri.index') }}"
+                   class="group relative aspect-square rounded-2xl overflow-hidden bg-slate-100">
+
+                    <img src="{{ asset('storage/' . $galeri->foto) }}"
+                         alt="{{ $galeri->judul }}"
+                         loading="lazy"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+
+                    {{-- Overlay --}}
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition duration-300"></div>
+
+                    {{-- Judul --}}
+                    <div class="absolute inset-x-0 bottom-0 p-3 translate-y-2 opacity-0
+                                group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                        <p class="text-white text-xs font-medium line-clamp-2">
+                            {{ $galeri->judul }}
+                        </p>
+                    </div>
+
+                </a>
+
+            @empty
+
+                <div class="col-span-2 sm:col-span-3 lg:col-span-6 text-center py-10">
+                    <p class="text-sm text-slate-400">
+                        Belum ada foto kegiatan.
+                    </p>
+                </div>
+
+            @endforelse
+
+        </div>
+
+        {{-- Tombol mobile --}}
+        <div class="mt-6 text-center sm:hidden">
+            <a href="{{ route('galeri.index') }}"
+               class="inline-block text-[#009B3A] font-medium text-sm hover:underline">
+                Lihat Semua Galeri →
+            </a>
+        </div>
+
+    </div>
+</section>
+
 {{-- ================= FLOATING WHATSAPP BUTTON ================= --}}
 <a href="https://wa.me/6281234567890?text=Halo%20Admin%20Kelurahan%20Tebing%20Tinggi%20Okura"
    target="_blank"
@@ -306,15 +537,65 @@
 @endsection
 
 @push('scripts')
+{{-- ================= COUNTER ANIMATION ================= --}}
+<script>
+    document.addEventListener('alpine:init', () => {
+
+        Alpine.data('counter', (target, useSeparator = false) => ({
+            target: Number(target) || 0,
+            current: 0,
+            displayValue: '0',
+            started: false,
+
+            start() {
+                if (this.started) return;
+
+                this.started = true;
+
+                const duration = 1600;
+                const startTime = performance.now();
+
+                const animate = (currentTime) => {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+
+                    // Ease out: awal cepat, kemudian melambat
+                    const easeOut = 1 - Math.pow(1 - progress, 3);
+
+                    this.current = Math.floor(this.target * easeOut);
+
+                    this.displayValue = this.current.toLocaleString('id-ID');
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        this.current = this.target;
+                        this.displayValue = this.target.toLocaleString('id-ID');
+                    }
+                };
+
+                requestAnimationFrame(animate);
+            }
+        }));
+
+    });
+</script>
+
+
+{{-- ================= PETA KELURAHAN ================= --}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+
         const mapElement = document.getElementById('peta-kelurahan');
 
         if (!mapElement) {
             return;
         }
 
-        const kantorLurah = [0.5712465050879031, 101.53889059635989];
+        const kantorLurah = [
+            0.5712465050879031,
+            101.53889059635989
+        ];
 
         const map = L.map('peta-kelurahan').setView(kantorLurah, 14);
 
@@ -322,14 +603,17 @@
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
+
         // Marker Kantor Lurah
         L.marker(kantorLurah)
             .addTo(map)
             .bindPopup('<b>Kantor Lurah Tebing Tinggi Okura</b>');
 
+
         // Batas wilayah dari GeoJSON
         fetch('{{ asset('geojson/tebing-tinggi-okura.geojson') }}')
             .then(response => {
+
                 if (!response.ok) {
                     throw new Error('File GeoJSON tidak ditemukan');
                 }
@@ -337,6 +621,7 @@
                 return response.json();
             })
             .then(data => {
+
                 const batasWilayah = L.geoJSON(data, {
                     style: {
                         color: '#009B3A',
@@ -349,10 +634,13 @@
                 map.fitBounds(batasWilayah.getBounds(), {
                     padding: [20, 20]
                 });
+
             })
             .catch(error => {
                 console.error('Gagal memuat GeoJSON:', error);
             });
+
     });
 </script>
+
 @endpush

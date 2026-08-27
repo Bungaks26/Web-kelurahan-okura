@@ -36,7 +36,7 @@ class GalleryController extends Controller
 
         $request->validate([
             'foto'   => 'required|array|max:20',
-            'foto.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+            'foto.*' => 'image|mimes:jpg,jpeg,png,webp|max:20480',
         ], [
             'foto.max' => 'Maksimal 20 foto sekaligus per upload.',
         ]);

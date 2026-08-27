@@ -33,7 +33,7 @@ class UmkmController extends Controller
             'latitude'      => 'nullable|numeric|between:-90,90',
             'longitude'     => 'nullable|numeric|between:-180,180',
             'no_hp'         => 'nullable|string|max:20',
-            'foto'          => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'foto'          => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
             'status'        => 'required|in:aktif,nonaktif',
         ]);
 
@@ -62,7 +62,7 @@ class UmkmController extends Controller
             'latitude'      => 'nullable|numeric|between:-90,90',
             'longitude'     => 'nullable|numeric|between:-180,180',
             'no_hp'         => 'nullable|string|max:20',
-            'foto'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'foto'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'status'        => 'required|in:aktif,nonaktif',
         ]);
 

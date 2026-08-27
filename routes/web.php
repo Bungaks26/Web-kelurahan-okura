@@ -32,7 +32,6 @@ use App\Http\Controllers\Admin\AdminPengaduanController;
 use App\Http\Controllers\Admin\LayananSuratController as AdminLayananSuratController;
 use App\Http\Controllers\Admin\GaleriController;
 use App\Http\Controllers\Admin\AgendaController;
-use App\Http\Controllers\Admin\AnggaranController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\HeroBannerController;
 use App\Http\Controllers\Admin\EmergencyContactController;
@@ -142,13 +141,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::resource('agenda', AgendaController::class)->except(['show']);
 
     // Berita
-    Route::resource('berita', BeritaController::class);
+    Route::resource('berita', BeritaController::class)->parameters([
+        'berita' => 'berita',
+    ]);
 
     // Pengumuman
     Route::resource('pengumuman', PengumumanController::class);
 
     // Wisata
-    Route::resource('wisata', AdminWisataController::class);
+    Route::resource('wisata', AdminWisataController::class)
+        ->parameters([
+            'wisata' => 'wisata',
+    ]);
 
     // UMKM
     Route::resource('umkm', AdminUmkmController::class);
@@ -163,8 +167,21 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::put('/layanan-surat/{layananSurat}', [AdminLayananSuratController::class, 'update'])
         ->name('layanan-surat.update');
 
+    Route::post('/layanan-surat/{layananSurat}/mark-notified', [AdminLayananSuratController::class, 'markNotified'])
+        ->name('layanan-surat.mark-notified');
+
     Route::delete('/layanan-surat/{layananSurat}', [AdminLayananSuratController::class, 'destroy'])
         ->name('layanan-surat.destroy');
+
+    // Gallery untuk Wisata, UMKM, dan Berita
+    Route::get('/gallery/{type}/{id}', [GalleryController::class, 'index'])
+        ->name('gallery.index');
+
+    Route::post('/gallery/{type}/{id}', [GalleryController::class, 'store'])
+        ->name('gallery.store');
+
+    Route::delete('/gallery/{gallery}', [GalleryController::class, 'destroy'])
+        ->name('gallery.destroy');
 
     // Pegawai
     Route::resource('pegawai', PegawaiController::class);
@@ -189,22 +206,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::put('/pengaduan/{pengaduan}', [AdminPengaduanController::class, 'update'])
         ->name('pengaduan.update');
 
+    Route::post('/pengaduan/{pengaduan}/mark-notified', [AdminPengaduanController::class, 'markNotified'])
+        ->name('pengaduan.mark-notified');
+
     Route::delete('/pengaduan/{pengaduan}', [AdminPengaduanController::class, 'destroy'])
         ->name('pengaduan.destroy');
 
     // Hero Banner
+    Route::post('hero-banner/reorder', [HeroBannerController::class, 'reorder'])
+        ->name('hero-banner.reorder');
+
     Route::resource('hero-banner', HeroBannerController::class)
         ->except(['show']);
-
-    // ANGGARAN
-    Route::get('/anggaran', [AnggaranController::class, 'index'])
-        ->name('anggaran.index');
-
-    Route::post('/anggaran', [AnggaranController::class, 'store'])
-        ->name('anggaran.store');
-
-    Route::delete('/anggaran/{anggaran}', [AnggaranController::class, 'destroy'])
-        ->name('anggaran.destroy');
     
     // Pengaturan
     Route::get('/pengaturan', [SiteSettingController::class, 'index'])

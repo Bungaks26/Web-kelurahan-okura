@@ -64,20 +64,32 @@ class LayananSuratController extends Controller
     }
 
     public function destroy(LayananSurat $layananSurat)
-{
-    if ($layananSurat->berkas_persyaratan) {
-        foreach ($layananSurat->berkas_persyaratan as $berkas) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($berkas);
+    {
+        if ($layananSurat->berkas_persyaratan) {
+            foreach ($layananSurat->berkas_persyaratan as $berkas) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($berkas);
+            }
         }
+
+        if ($layananSurat->file_hasil) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($layananSurat->file_hasil);
+        }
+
+        $layananSurat->delete();
+
+        return redirect()->route('admin.layanan-surat.index')
+            ->with('success', 'Data layanan surat berhasil dihapus.');
     }
 
-    if ($layananSurat->file_hasil) {
-        \Illuminate\Support\Facades\Storage::disk('public')->delete($layananSurat->file_hasil);
+    public function markNotified(LayananSurat $layananSurat)
+    {
+        $layananSurat->update([
+            'notif_terakhir_dikirim' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Notifikasi berhasil dicatat.',
+        ]);
     }
-
-    $layananSurat->delete();
-
-    return redirect()->route('admin.layanan-surat.index')
-        ->with('success', 'Data layanan surat berhasil dihapus.');
-}
 }

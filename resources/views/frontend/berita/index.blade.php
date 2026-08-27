@@ -71,61 +71,55 @@
 
         @endif
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            @forelse ($beritas->skip(1) as $berita)
-                <a href="{{ route('berita.show', $berita->slug) }}" class="group flex flex-col rounded-3xl overflow-hidden bg-white border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 h-full">
-                    <div class="relative h-52 overflow-hidden">
+        @if ($beritas->count() > 1)
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach ($beritas->skip(1) as $berita)
+                    <a href="{{ route('berita.show', $berita->slug) }}"
+                    class="group flex flex-col rounded-3xl overflow-hidden bg-white border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 h-full">
 
-                        <img src="{{ asset('storage/'.$berita->thumbnail) }}"
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            alt="{{ $berita->judul }}"
-                            loading="lazy">
+                        <div class="relative h-52 overflow-hidden">
 
-                        <div class="absolute top-4 left-4">
-                            <span class="px-3 py-1 rounded-full bg-white/90 backdrop-blur text-xs font-semibold text-[#009B3A] capitalize">
-                                {{ $berita->kategori }}
-                            </span>
-                        </div>
+                            <img src="{{ asset('storage/'.$berita->thumbnail) }}"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                alt="{{ $berita->judul }}"
+                                loading="lazy">
 
-                    </div>
-
-                    <div class="p-6 flex flex-col flex-1">
-
-                        <h3 class="text-lg font-bold text-slate-800 line-clamp-2 group-hover:text-[#009B3A] transition-colors">
-                            {{ $berita->judul }}
-                        </h3>
-
-                        <p class="text-sm text-slate-500 mt-3 line-clamp-3 flex-1 leading-relaxed">
-                            {{ \Illuminate\Support\Str::limit(strip_tags($berita->isi), 120) }}
-                        </p>
-
-                        <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between text-sm">
-
-                            <span class="text-slate-500">
-                                {{ $berita->published_at->translatedFormat('d M Y') }}
-                            </span>
-
-                            <span class="font-semibold text-[#009B3A]">
-                                Baca →
-                            </span>
+                            <div class="absolute top-4 left-4">
+                                <span class="px-3 py-1 rounded-full bg-white/90 backdrop-blur text-xs font-semibold text-[#009B3A] capitalize">
+                                    {{ $berita->kategori }}
+                                </span>
+                            </div>
 
                         </div>
 
-                    </div>
+                        <div class="p-6 flex flex-col flex-1">
 
-                </a>
-            @empty
-                <div class="col-span-3 bg-white rounded-3xl border border-dashed border-slate-300 py-16 text-center">
-                    <div class="text-5xl mb-3">📰</div>
-                    <p class="text-base font-semibold text-slate-700">
-                        Belum ada berita dipublikasikan
-                    </p>
-                    <p class="text-sm text-slate-500 mt-1">
-                        Informasi terbaru kegiatan kelurahan akan ditampilkan setelah dipublikasikan oleh admin.
-                    </p>
-                </div>
-            @endforelse
-        </div>
+                            <h3 class="text-lg font-bold text-slate-800 line-clamp-2 group-hover:text-[#009B3A] transition-colors">
+                                {{ $berita->judul }}
+                            </h3>
+
+                            <p class="text-sm text-slate-500 mt-3 line-clamp-3 flex-1 leading-relaxed">
+                                {{ \Illuminate\Support\Str::limit(strip_tags($berita->isi), 120) }}
+                            </p>
+
+                            <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between text-sm">
+
+                                <span class="text-slate-500">
+                                    {{ $berita->published_at->translatedFormat('d M Y') }}
+                                </span>
+
+                                <span class="font-semibold text-[#009B3A]">
+                                    Baca →
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </a>
+                @endforeach
+            </div>
+        @endif
 
         @if ($beritas->hasPages())
             <div class="mt-10">{{ $beritas->links() }}</div>

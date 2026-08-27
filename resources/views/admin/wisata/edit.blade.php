@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="max-w-2xl">
-    <form action="{{ route('admin.wisata.update', $wisata) }}" method="POST" enctype="multipart/form-data"
+    <form action="{{ route('admin.wisata.update', ['wisata' => $wisata->id]) }}" method="POST" enctype="multipart/form-data"
           class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 sm:p-8 space-y-5">
         @csrf @method('PUT')
 
