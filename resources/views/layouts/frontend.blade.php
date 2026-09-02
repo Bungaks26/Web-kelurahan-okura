@@ -7,6 +7,7 @@
 
     {{-- SEO Dinamis & OpenGraph (Preview WhatsApp / Social Media) --}}
     <title>{{ $seoTitle ?? 'Kelurahan Tebing Tinggi Okura' }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('storage/logo-kelurahan.png') }}">
     <meta name="description" content="{{ $seoDescription ?? 'Portal resmi Kelurahan Tebing Tinggi Okura - Layanan publik, wisata, dan UMKM warga.' }}">
 
     <meta property="og:title" content="{{ $seoTitle ?? 'Kelurahan Tebing Tinggi Okura' }}">
