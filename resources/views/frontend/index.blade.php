@@ -479,9 +479,6 @@
             </a>
         @empty
             <p class="text-sm text-slate-400 col-span-4 text-center py-10">Belum ada data UMKM.</p>
-            <section class="max-w-2xl mx-auto px-4 sm:px-6 py-16">
-                @include('frontend.partials.widget-survei')
-            </section>
         @endforelse
     </div>
 
