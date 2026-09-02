@@ -79,11 +79,12 @@
             @if ($banners->isNotEmpty() && $banners->first()->judul)
                 <span x-text="{{ json_encode($banners->pluck('judul')) }}[current] || '{{ $banners->first()->judul }}'"></span>
             @else
-                Tebing Tinggi Okura
+                {{ $siteSettings['nama_kelurahan'] ?? 'Tebing Tinggi Okura' }}
             @endif
         </h1>
         <p class="mt-5 text-base sm:text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
-            Menyajikan pelayanan, informasi, dan potensi wisata & UMKM warga secara cepat, transparan, dan modern.
+            {{ $siteSettings['deskripsi_kelurahan']
+                ?? 'Menyajikan pelayanan, informasi, dan potensi wisata & UMKM warga secara cepat, transparan, dan modern.' }}
         </p>
 
         {{-- Universal Quick Search & Tracking Bar (2 Tab) --}}
@@ -117,22 +118,27 @@
             </form>
 
             {{-- Form Lacak Pengajuan (Universal) --}}
-            <form x-show="tab === 'lacak'" x-cloak action="{{ route('tracking.universal') }}" method="POST">
-                @csrf
-                <div class="flex items-center bg-white/95 backdrop-blur rounded-2xl shadow-lg p-2">
-                    <svg class="w-5 h-5 text-slate-400 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                    <input type="text" name="kode_tiket" placeholder="Masukkan kode tiket, contoh: ADU-20260809-001"
-                           class="flex-1 px-3 py-2.5 bg-transparent focus:outline-none text-slate-700 text-sm sm:text-base font-mono">
-                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#E31E24] hover:bg-[#C91A1F] text-white text-sm font-semibold transition">
-                        Lacak
-                    </button>
+            {{-- Pilihan Lacak Pengajuan --}}
+            <div x-show="tab === 'lacak'" x-cloak>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+
+                    <a href="{{ route('layanan.track.form') }}"
+                    class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/95 text-slate-700 hover:bg-white shadow-lg text-sm font-semibold transition">
+                        📄 Lacak Layanan Surat
+                    </a>
+
+                    <a href="{{ route('pengaduan.track.form') }}"
+                    class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/95 text-slate-700 hover:bg-white shadow-lg text-sm font-semibold transition">
+                        📢 Lacak Pengaduan
+                    </a>
+
+                    <a href="{{ route('janji-temu.track.form') }}"
+                    class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/95 text-slate-700 hover:bg-white shadow-lg text-sm font-semibold transition">
+                        📅 Lacak Janji Temu
+                    </a>
+
                 </div>
-                @error('kode_tiket')
-                    <p class="text-xs text-red-300 mt-2 text-center bg-red-900/30 rounded-lg py-1.5">{{ $message }}</p>
-                @enderror
-            </form>
+            </div>
         </div>
 
         {{-- ================= LIVE COUNTER ================= --}}
@@ -199,11 +205,42 @@
 <section class="relative z-20 -mt-10 px-4 sm:px-6">
     <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
         @php
-            $quickLinks = [
-                ['icon' => '📄', 'label' => 'Layanan Surat', 'desc' => 'Ajukan & lacak', 'route' => 'layanan.index', 'color' => 'bg-[#009B3A]/10 text-[#009B3A]'],
-                ['icon' => '📢', 'label' => 'Lapor Pengaduan', 'desc' => 'Sampaikan keluhan', 'route' => 'pengaduan.create', 'color' => 'bg-[#E31E24]/10 text-[#E31E24]'],
-                ['icon' => '🏞️', 'label' => 'Wisata Okura', 'desc' => 'Jelajahi destinasi', 'route' => 'wisata.index', 'color' => 'bg-[#FFE600]/20 text-[#8A7600]'],
-                ['icon' => '🛍️', 'label' => 'UMKM Warga', 'desc' => 'Dukung usaha lokal', 'route' => 'umkm.index', 'color' => 'bg-[#009B3A]/10 text-[#009B3A]'],
+            $quickLinks = [];
+
+            if (($siteSettings['layanan_surat_aktif'] ?? '1') === '1') {
+                $quickLinks[] = [
+                    'icon' => '📄',
+                    'label' => 'Layanan Surat',
+                    'desc' => 'Ajukan & lacak',
+                    'route' => 'layanan.index',
+                    'color' => 'bg-[#009B3A]/10 text-[#009B3A]',
+                ];
+            }
+
+            if (($siteSettings['pengaduan_aktif'] ?? '1') === '1') {
+                $quickLinks[] = [
+                    'icon' => '📢',
+                    'label' => 'Lapor Pengaduan',
+                    'desc' => 'Sampaikan keluhan',
+                    'route' => 'pengaduan.create',
+                    'color' => 'bg-[#E31E24]/10 text-[#E31E24]',
+                ];
+            }
+
+            $quickLinks[] = [
+                'icon' => '🏞️',
+                'label' => 'Wisata Okura',
+                'desc' => 'Jelajahi destinasi',
+                'route' => 'wisata.index',
+                'color' => 'bg-[#FFE600]/20 text-[#8A7600]',
+            ];
+
+            $quickLinks[] = [
+                'icon' => '🛍️',
+                'label' => 'UMKM Warga',
+                'desc' => 'Dukung usaha lokal',
+                'route' => 'umkm.index',
+                'color' => 'bg-[#009B3A]/10 text-[#009B3A]',
             ];
         @endphp
 
@@ -526,13 +563,32 @@
 </section>
 
 {{-- ================= FLOATING WHATSAPP BUTTON ================= --}}
-<a href="https://wa.me/6281234567890?text=Halo%20Admin%20Kelurahan%20Tebing%20Tinggi%20Okura"
-   target="_blank"
-   class="fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 rounded-full bg-[#009B3A] shadow-xl hover:bg-[#007F2F] transition-all hover:scale-110">
-    <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.86 9.86 0 004.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2zm0 18.13a8.2 8.2 0 01-4.18-1.14l-.3-.18-3.11.82.83-3.04-.2-.31a8.22 8.22 0 01-1.26-4.37c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.83 2.42a8.18 8.18 0 012.41 5.83c0 4.54-3.7 8.21-8.26 8.21z"/>
-    </svg>
-</a>
+@php
+    $whatsapp = preg_replace('/\D+/', '', $siteSettings['whatsapp'] ?? '');
+
+    if (str_starts_with($whatsapp, '0')) {
+        $whatsapp = '62' . substr($whatsapp, 1);
+    }
+
+    $namaKelurahan = $siteSettings['nama_kelurahan'] ?? 'Tebing Tinggi Okura';
+@endphp
+
+@if ($whatsapp)
+    <a href="https://wa.me/{{ $whatsapp }}?text={{ urlencode('Halo Admin Kelurahan ' . $namaKelurahan) }}"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="Hubungi WhatsApp Kelurahan"
+       class="fixed bottom-6 right-6 z-[60] flex items-center justify-center w-14 h-14 rounded-full bg-[#009B3A] shadow-xl hover:bg-[#007F2F] transition-all hover:scale-110">
+
+        <svg class="w-7 h-7 text-white"
+             fill="currentColor"
+             viewBox="0 0 24 24"
+             aria-hidden="true">
+            <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.86 9.86 0 004.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2zm0 18.13a8.2 8.2 0 01-4.18-1.14l-.3-.18-3.11.82.83-3.04-.2-.31a8.22 8.22 0 01-1.26-4.37c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.83 2.42a8.18 8.18 0 012.41 5.83c0 4.54-3.7 8.21-8.26 8.21z"/>
+        </svg>
+
+    </a>
+@endif
 
 @endsection
 

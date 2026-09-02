@@ -11,17 +11,20 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->redirectGuestsTo(fn () => route('admin.login'));
+        $middleware->redirectGuestsTo(
+            fn () => route('admin.login')
+        );
+
+        $middleware->append(
+            \App\Http\Middleware\SecurityHeaders::class
+        );
 
         $middleware->alias([
             'super_admin' => \App\Http\Middleware\EnsureIsSuperAdmin::class,
+            'can_approve' => \App\Http\Middleware\EnsureCanApprove::class,
+            'staf' => \App\Http\Middleware\EnsureIsStaf::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
-
-    $middleware->alias([
-    'super_admin' => \App\Http\Middleware\EnsureIsSuperAdmin::class,
-    'can_approve' => \App\Http\Middleware\EnsureCanApprove::class,
-]);

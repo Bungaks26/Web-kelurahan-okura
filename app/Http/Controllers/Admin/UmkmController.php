@@ -42,7 +42,6 @@ class UmkmController extends Controller
         }
 
         Umkm::create($validated);
-
         return redirect()->route('admin.umkm.index')->with('success', 'Data UMKM berhasil ditambahkan.');
     }
 

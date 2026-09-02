@@ -53,7 +53,9 @@
         @if ($pengaduan->lampiran)
             <div>
                 <p class="text-xs text-slate-400 mb-2">Lampiran</p>
-                <img src="{{ asset('storage/'.$pengaduan->lampiran) }}" class="max-w-xs rounded-xl border border-slate-200" alt="Lampiran">
+                <a href="{{ route('admin.pengaduan.lampiran', $pengaduan) }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-50 text-emerald-700 text-sm font-semibold hover:bg-emerald-100 transition">
+                    📎 Lihat Lampiran
+                </a>
             </div>
         @endif
     </div>

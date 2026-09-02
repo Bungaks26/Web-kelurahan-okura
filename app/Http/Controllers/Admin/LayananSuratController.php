@@ -44,16 +44,16 @@ class LayananSuratController extends Controller
         $validated = $request->validate([
             'status'         => 'required|in:diajukan,diproses,disetujui,ditolak,selesai',
             'catatan_admin'  => 'nullable|string',
-            'file_hasil'     => 'nullable|file|mimes:pdf|max:2048',
+            'file_hasil'     => 'nullable|file|mimes:pdf|max:20048',
         ]);
 
         $validated['diproses_oleh'] = Auth::id();
 
         if ($request->hasFile('file_hasil')) {
             if ($layananSurat->file_hasil) {
-                Storage::disk('public')->delete($layananSurat->file_hasil);
+                Storage::disk('local')->delete($layananSurat->file_hasil);
             }
-            $validated['file_hasil'] = $request->file('file_hasil')->store('layanan-surat/hasil', 'public');
+            $validated['file_hasil'] = $request->file('file_hasil')->store('layanan-surat/hasil', 'local');
         }
 
         $layananSurat->update($validated);
@@ -67,12 +67,12 @@ class LayananSuratController extends Controller
     {
         if ($layananSurat->berkas_persyaratan) {
             foreach ($layananSurat->berkas_persyaratan as $berkas) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($berkas);
+                \Illuminate\Support\Facades\Storage::disk('local')->delete($berkas);
             }
         }
 
         if ($layananSurat->file_hasil) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($layananSurat->file_hasil);
+            \Illuminate\Support\Facades\Storage::disk('local')->delete($layananSurat->file_hasil);
         }
 
         $layananSurat->delete();
@@ -91,5 +91,42 @@ class LayananSuratController extends Controller
             'success' => true,
             'message' => 'Notifikasi berhasil dicatat.',
         ]);
+    }
+
+    public function downloadBerkas(LayananSurat $layananSurat, int $index)
+    {
+        abort_unless(
+            is_array($layananSurat->berkas_persyaratan),
+            404
+        );
+
+        $berkas = $layananSurat->berkas_persyaratan[$index] ?? null;
+
+        abort_unless($berkas, 404);
+
+        abort_unless(
+            Storage::disk('local')->exists($berkas),
+            404
+        );
+
+        return Storage::disk('local')->download($berkas);
+    }
+
+    public function downloadHasil(LayananSurat $layananSurat)
+    {
+        abort_unless(
+            $layananSurat->file_hasil,
+            404
+        );
+
+        abort_unless(
+            Storage::disk('local')->exists($layananSurat->file_hasil),
+            404
+        );
+
+        return Storage::disk('local')->download(
+            $layananSurat->file_hasil,
+            'surat-' . $layananSurat->kode_tiket . '.pdf'
+        );
     }
 }

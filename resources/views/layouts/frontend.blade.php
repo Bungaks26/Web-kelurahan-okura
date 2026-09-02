@@ -168,8 +168,9 @@
                             alt="Logo Kelurahan Tebing Tinggi Okura"
                             class="w-full h-full object-contain">
                     </div>
-                    <span :class="scrolled ? 'text-[#0B1F3A]' : 'text-white'" class="font-bold text-sm sm:text-base transition-colors">
-                        Tebing Tinggi Okura
+                    <span :class="scrolled ? 'text-[#0B1F3A]' : 'text-white'"
+                        class="font-bold text-sm sm:text-base transition-colors">
+                        {{ $siteSettings['nama_kelurahan'] ?? 'Tebing Tinggi Okura' }}
                     </span>
                 </a>
 
@@ -242,6 +243,13 @@
                                 Pengumuman
                             </a>
 
+                            @if (($siteSettings['janji_temu_aktif'] ?? '1') === '1')
+                                <a href="{{ route('janji-temu.create') }}"
+                                class="block px-5 py-3 text-sm text-slate-600
+                                        hover:bg-slate-50 hover:text-emerald-600 transition">
+                                    Janji Temu
+                                </a>
+                            @endif
                         </div>
                     </div>
 
@@ -343,6 +351,13 @@
                             Pengumuman
                         </a>
 
+                        @if (($siteSettings['janji_temu_aktif'] ?? '1') === '1')
+                        <a href="{{ route('janji-temu.create') }}"
+                        class="block px-5 py-3 text-sm text-slate-600
+                                hover:bg-slate-50 hover:text-emerald-600 transition">
+                            Janji Temu
+                        </a>
+                    @endif
                     </div>
                 </div>
 
@@ -361,10 +376,12 @@
                     Galeri
                 </a>
 
-                <a href="{{ route('pengaduan.create') }}"
-                class="block px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 text-sm font-medium">
-                    Lapor Pengaduan
-                </a>
+                @if (($siteSettings['pengaduan_aktif'] ?? '1') === '1')
+                    <a href="{{ route('pengaduan.create') }}"
+                    class="hidden md:inline-flex items-center px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition">
+                        Lapor Sekarang
+                    </a>
+                @endif
 
             </div>
         </div>
@@ -399,169 +416,287 @@
 
     {{-- ============ FOOTER ============ --}}
     <footer class="bg-[#0B1F3A] text-slate-300 pt-16 pb-8">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-10 border-b border-white/10">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 pb-10 border-b border-white/10">
 
-            {{-- Identitas Kelurahan --}}
-            <div class="md:col-span-2">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-11 h-11 rounded-xl flex items-center justify-center overflow-hidden">
-                        <img src="{{ asset('images/logo2.png') }}"
-                             alt="Logo Kelurahan Tebing Tinggi Okura"
-                             class="w-full h-full object-contain">
+                {{-- Identitas Kelurahan --}}
+                <div class="md:col-span-2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-11 h-11 rounded-xl flex items-center justify-center overflow-hidden">
+                            <img src="{{ asset('images/logo2.png') }}"
+                                alt="Logo Kelurahan Tebing Tinggi Okura"
+                                class="w-full h-full object-contain">
+                        </div>
+
+                        <div>
+                            <p class="font-bold text-white">
+                                Kelurahan {{ $siteSettings['nama_kelurahan'] ?? 'Tebing Tinggi Okura' }}
+                            </p>
+
+                            <p class="text-xs text-slate-400">
+                                Kecamatan {{ $siteSettings['kecamatan'] ?? 'Rumbai Pesisir' }},
+                                Kota {{ $siteSettings['kota'] ?? 'Pekanbaru' }}
+                            </p>
+                        </div>
                     </div>
 
-                    <div>
-                        <p class="font-bold text-white">
-                            Kelurahan Tebing Tinggi Okura
-                        </p>
-                        <p class="text-xs text-slate-400">
-                            Kecamatan Rumbai Pesisir, Kota Pekanbaru
-                        </p>
-                    </div>
-                </div>
-
-                <p class="text-sm text-slate-400 max-w-md leading-relaxed">
-                    Portal resmi Kelurahan Tebing Tinggi Okura untuk memberikan
-                    informasi pemerintahan, pelayanan publik, berita, potensi
-                    wisata, dan UMKM kepada masyarakat.
-                </p>
-            </div>
-
-
-            {{-- Tautan Cepat --}}
-            <div>
-                <h4 class="text-white font-semibold text-sm mb-4">
-                    Tautan Cepat
-                </h4>
-
-                <ul class="space-y-3 text-sm">
-                    <li>
-                        <a href="{{ route('profil') }}"
-                           class="text-slate-400 hover:text-emerald-400 transition-colors">
-                            Profil Kelurahan
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{{ route('layanan.index') }}"
-                           class="text-slate-400 hover:text-emerald-400 transition-colors">
-                            Layanan Surat
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{{ route('wisata.index') }}"
-                           class="text-slate-400 hover:text-emerald-400 transition-colors">
-                            Wisata Okura
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{{ route('umkm.index') }}"
-                    class="text-slate-400 hover:text-emerald-400 transition-colors">
-                                Direktori UMKM
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="{{ route('berita.index') }}"
-                            class="text-slate-400 hover:text-emerald-400 transition-colors">
-                                Berita & Kegiatan
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="{{ route('agenda.index') }}"
-                            class="text-slate-400 hover:text-emerald-400 transition-colors">
-                                Agenda
-                            </a>
-                        </li>
-                    </ul>
+                    <p class="text-sm text-slate-400 max-w-md leading-relaxed">
+                        {{ $siteSettings['deskripsi_kelurahan']
+                            ?? 'Portal resmi Kelurahan Tebing Tinggi Okura untuk memberikan informasi pemerintahan, pelayanan publik, berita, potensi wisata, dan UMKM kepada masyarakat.' }}
+                    </p>
                 </div>
 
 
-                {{-- Kontak --}}
+                {{-- Tautan Cepat --}}
                 <div>
                     <h4 class="text-white font-semibold text-sm mb-4">
-                        Kontak
+                        Tautan Cepat
                     </h4>
 
                     <ul class="space-y-3 text-sm">
-
-                        <li class="flex items-start gap-2.5">
-                            <svg class="w-4 h-4 mt-0.5 text-emerald-400 flex-shrink-0"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M17.657 16.657L13.414 21l-4.243-4.343a8 8 0 1111.314 0z"/>
-                                <path stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
-
-                            <span class="text-slate-400">
-                                Jl. Kelurahan Okura, Rumbai Pesisir, Pekanbaru
-                            </span>
+                        <li>
+                            <a href="{{ route('profil') }}"
+                            class="text-slate-400 hover:text-emerald-400 transition-colors">
+                                Profil Kelurahan
+                            </a>
                         </li>
 
-                        <li class="flex items-center gap-2.5">
-                            <svg class="w-4 h-4 text-emerald-400 flex-shrink-0"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                            </svg>
-
-                            <span class="text-slate-400">
-                                kelurahan.okura@pekanbaru.go.id
-                            </span>
+                        <li>
+                            <a href="{{ route('layanan.index') }}"
+                            class="text-slate-400 hover:text-emerald-400 transition-colors">
+                                Layanan Surat
+                            </a>
                         </li>
 
-                        <li class="flex items-center gap-2.5">
-                            <svg class="w-4 h-4 text-emerald-400 flex-shrink-0"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M3 5a2 2 0 012-2h3.28a2 2 0 011.94 1.515l.7 2.8a2 2 0 01-.45 1.92l-1.27 1.27a16 16 0 006.28 6.28l1.27-1.27a2 2 0 011.92-.45l2.8.7A2 2 0 0121 17.72V21a2 2 0 01-2 2h-1C9.61 23 1 14.39 1 4V3a2 2 0 012-2z"/>
-                            </svg>
-
-                            <span class="text-slate-400">
-                                (0761) 000-000
-                            </span>
+                        <li>
+                            <a href="{{ route('wisata.index') }}"
+                            class="text-slate-400 hover:text-emerald-400 transition-colors">
+                                Wisata Okura
+                            </a>
                         </li>
 
-                    </ul>
+                        <li>
+                            <a href="{{ route('umkm.index') }}"
+                        class="text-slate-400 hover:text-emerald-400 transition-colors">
+                                    Direktori UMKM
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="{{ route('berita.index') }}"
+                                class="text-slate-400 hover:text-emerald-400 transition-colors">
+                                    Berita & Kegiatan
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="{{ route('agenda.index') }}"
+                                class="text-slate-400 hover:text-emerald-400 transition-colors">
+                                    Agenda
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+
+                    {{-- Kontak --}}
+                    <div>
+                        <h4 class="text-white font-semibold text-sm mb-4">
+                            Kontak
+                        </h4>
+
+                        <ul class="space-y-3 text-sm">
+
+                            <li class="flex items-start gap-2.5">
+                                <svg class="w-4 h-4 mt-0.5 text-emerald-400 flex-shrink-0"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M17.657 16.657L13.414 21l-4.243-4.343a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+
+                                <span class="text-slate-400">
+                                    {{ $siteSettings['alamat_kantor']
+                                        ?? 'Jl. Kelurahan Okura, Rumbai Pesisir, Pekanbaru' }}
+                                </span>
+                            </li>
+
+                            <li class="flex items-center gap-2.5">
+                                <svg class="w-4 h-4 text-emerald-400 flex-shrink-0"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+
+                                @if (!empty($siteSettings['email']))
+                                    <a href="mailto:{{ $siteSettings['email'] }}"
+                                    class="text-slate-400 hover:text-emerald-400 transition">
+                                        {{ $siteSettings['email'] }}
+                                    </a>
+                                @else
+                                    <span class="text-slate-500">Email belum diatur</span>
+                                @endif
+                            </li>
+
+                            <li class="flex items-center gap-2.5">
+                                <svg class="w-4 h-4 text-emerald-400 flex-shrink-0"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M3 5a2 2 0 012-2h3.28a2 2 0 011.94 1.515l.7 2.8a2 2 0 01-.45 1.92l-1.27 1.27a16 16 0 006.28 6.28l1.27-1.27a2 2 0 011.92-.45l2.8.7A2 2 0 0121 17.72V21a2 2 0 01-2 2h-1C9.61 23 1 14.39 1 4V3a2 2 0 012-2z"/>
+                                </svg>
+
+                                @if (!empty($siteSettings['telepon']))
+                                    <a href="tel:{{ $siteSettings['telepon'] }}"
+                                    class="text-slate-400 hover:text-emerald-400 transition">
+                                        {{ $siteSettings['telepon'] }}
+                                    </a>
+                                @else
+                                    <span class="text-slate-500">Telepon belum diatur</span>
+                                @endif
+                            </li>
+
+                        </ul>
+                    </div>
+
+                    {{-- Jam Pelayanan --}}
+                    <div>
+                        <h4 class="text-white font-semibold text-sm mb-4">
+                            Jam Pelayanan
+                        </h4>
+
+                        <ul class="space-y-2.5 text-sm">
+
+                            @php
+                                $jamPelayanan = [
+                                    'senin' => 'Senin',
+                                    'selasa' => 'Selasa',
+                                    'rabu' => 'Rabu',
+                                    'kamis' => 'Kamis',
+                                    'jumat' => 'Jumat',
+                                    'sabtu' => 'Sabtu',
+                                    'minggu' => 'Minggu',
+                                ];
+                            @endphp
+
+                            @foreach ($jamPelayanan as $key => $hari)
+                                <li class="flex items-center justify-between gap-4">
+                                    <span class="text-slate-400">
+                                        {{ $hari }}
+                                    </span>
+
+                                    <span class="text-slate-300 text-xs text-right">
+                                        {{ $siteSettings['jam_'.$key] ?? 'Belum diatur' }}
+                                    </span>
+                                </li>
+                            @endforeach
+
+                        </ul>
+                    </div>
+
+                    {{-- Media Sosial --}}
+                    <div>
+                        <h4 class="text-white font-semibold text-sm mb-4">
+                            Media Sosial
+                        </h4>
+
+                        <div class="space-y-2.5">
+
+                            @if (!empty($siteSettings['instagram']))
+                                <a href="{{ $siteSettings['instagram'] }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="flex items-center gap-2.5 text-sm text-slate-400 hover:text-emerald-400 transition">
+                                    <span class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                                        ◎
+                                    </span>
+                                    Instagram
+                                </a>
+                            @endif
+
+                            @if (!empty($siteSettings['facebook']))
+                                <a href="{{ $siteSettings['facebook'] }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="flex items-center gap-2.5 text-sm text-slate-400 hover:text-emerald-400 transition">
+                                    <span class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                                        f
+                                    </span>
+                                    Facebook
+                                </a>
+                            @endif
+
+                            @if (!empty($siteSettings['youtube']))
+                                <a href="{{ $siteSettings['youtube'] }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="flex items-center gap-2.5 text-sm text-slate-400 hover:text-emerald-400 transition">
+                                    <span class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                                        ▶
+                                    </span>
+                                    YouTube
+                                </a>
+                            @endif
+
+                            @if (!empty($siteSettings['tiktok']))
+                                <a href="{{ $siteSettings['tiktok'] }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="flex items-center gap-2.5 text-sm text-slate-400 hover:text-emerald-400 transition">
+                                    <span class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                                        ♪
+                                    </span>
+                                    TikTok
+                                </a>
+                            @endif
+
+                            @if (
+                                empty($siteSettings['instagram']) &&
+                                empty($siteSettings['facebook']) &&
+                                empty($siteSettings['youtube']) &&
+                                empty($siteSettings['tiktok'])
+                            )
+                                <p class="text-sm text-slate-500">
+                                    Media sosial belum diatur.
+                                </p>
+                            @endif
+
+                        </div>
+                    </div>
+
+                </div>
+
+
+                {{-- Copyright --}}
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6">
+
+                    <p class="text-xs text-slate-500 text-center sm:text-left">
+                        &copy; {{ date('Y') }} Kelurahan Tebing Tinggi Okura.
+                        Seluruh Hak Dilindungi.
+                    </p>
+
+                    <p class="text-xs text-slate-600 text-center sm:text-right">
+                        Website Kelurahan {{ $siteSettings['nama_kelurahan'] ?? 'Tebing Tinggi Okura' }}
+                    </p>
+
                 </div>
 
             </div>
-
-
-            {{-- Copyright --}}
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6">
-
-                <p class="text-xs text-slate-500 text-center sm:text-left">
-                    &copy; {{ date('Y') }} Kelurahan Tebing Tinggi Okura.
-                    Seluruh Hak Dilindungi.
-                </p>
-
-                <p class="text-xs text-slate-600 text-center sm:text-right">
-                    Website Kelurahan Tebing Tinggi Okura
-                </p>
-
-            </div>
-
         </div>
     </footer>
 

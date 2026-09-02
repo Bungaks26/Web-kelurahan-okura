@@ -48,15 +48,7 @@
                     <div class="flex justify-between"><span class="text-slate-400">Jenis</span><span class="font-medium text-slate-700">Janji Temu Lurah</span></div>
                     <div class="flex justify-between"><span class="text-slate-400">Pemohon</span><span class="font-medium text-slate-700">{{ $item->nama_pemohon }}</span></div>
                     <div class="flex justify-between"><span class="text-slate-400">Tanggal Diinginkan</span><span class="font-medium text-slate-700">{{ $item->tanggal_diinginkan->translatedFormat('d F Y') }}</span></div>
-                @elseif ($jenis === 'wisata')
-                    <div class="flex justify-between"><span class="text-slate-400">Jenis</span><span class="font-medium text-slate-700">Pendaftaran Wisata Baru</span></div>
-                    <div class="flex justify-between"><span class="text-slate-400">Nama Wisata</span><span class="font-medium text-slate-700">{{ $item->nama }}</span></div>
-                    <div class="flex justify-between"><span class="text-slate-400">Pengaju</span><span class="font-medium text-slate-700">{{ $item->nama_pengaju }}</span></div>
-                @elseif ($jenis === 'umkm')
-                    <div class="flex justify-between"><span class="text-slate-400">Jenis</span><span class="font-medium text-slate-700">Pendaftaran UMKM Baru</span></div>
-                    <div class="flex justify-between"><span class="text-slate-400">Nama Usaha</span><span class="font-medium text-slate-700">{{ $item->nama_usaha }}</span></div>
-                    <div class="flex justify-between"><span class="text-slate-400">Pengaju</span><span class="font-medium text-slate-700">{{ $item->nama_pengaju }}</span></div>
-                @endif
+               @endif
 
                 <div class="flex justify-between"><span class="text-slate-400">Tanggal Pengajuan</span><span class="font-medium text-slate-700">{{ $item->created_at->translatedFormat('d F Y, H:i') }}</span></div>
 
@@ -71,37 +63,78 @@
         </div>
 
         {{-- Action Buttons --}}
-        <div class="grid grid-cols-2 gap-3 mt-5" x-data="{
-            copied: false,
-            copyCode() {
-                navigator.clipboard.writeText('{{ $item->kode_tiket }}');
-                this.copied = true;
-                setTimeout(() => this.copied = false, 2000);
-            }
-        }">
+        <div
+            class="mt-5"
+            x-data="{
+                copied: false,
+                copyCode() {
+                    navigator.clipboard.writeText('{{ $item->kode_tiket }}');
+                    this.copied = true;
+                    setTimeout(() => this.copied = false, 2000);
+                }
+            }">
 
-        <div class="mt-6">
+            {{-- Tombol utama --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
-        </div>
+                <a href="{{ route('resi.download', $item->kode_tiket) }}"
+                class="flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold transition-all hover:-translate-y-0.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012 2v11a2 2 0 01-2 2z"/>
+                    </svg>
+                    Download Bukti Pengajuan
+                </a>
 
-            <a href="{{ route('resi.download', $item->kode_tiket) }}"
-               class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold">
-                Download PDF
-            </a>
-            <button onclick="window.print()"
-                    class="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-semibold">
-                Cetak Resi
-            </button>
-            <button @click="copyCode()"
-                    class="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-semibold">
-                <span x-show="!copied">Salin Kode</span>
-                <span x-show="copied" x-cloak class="text-emerald-600">Tersalin!</span>
-            </button>
+                @php
+                    $trackingRoute = match ($jenis) {
+                        'pengaduan' => route('pengaduan.track.form'),
+                        'layanan_surat' => route('layanan.track.form'),
+                        'janji_temu' => route('janji-temu.track.form'),
+                        default => route('home'),
+                    };
+                @endphp
+
+                <a href="{{ $trackingRoute }}"
+                class="flex items-center justify-center gap-2 py-3 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-sm font-semibold transition-all hover:-translate-y-0.5">
+
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012 2h5.586a1 1 0 01.293.707l5.414 5.414a1 1 0 012 2v10a2 2 0 01-2 2z"/>
+                    </svg>
+
+                    Lacak Status Pengajuan
+                </a>
+
+            </div>
+
+            {{-- Tombol sekunder --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+
+                <button onclick="window.print()"
+                        class="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 text-sm font-semibold transition">
+                    Cetak Resi
+                </button>
+
+                <button @click="copyCode()"
+                        class="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 text-sm font-semibold transition">
+                    <span x-show="!copied">Salin Kode</span>
+                    <span x-show="copied" x-cloak class="text-emerald-600">Tersalin!</span>
+                </button>
+
+            </div>
+
+            {{-- Bagikan WhatsApp --}}
             <a href="https://wa.me/?text={{ urlencode('Cek status pengajuan saya di Kelurahan Tebing Tinggi Okura dengan kode: ' . $item->kode_tiket . ' — ' . $trackingUrl) }}"
-               target="_blank"
-               class="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-semibold">
-                Bagikan WA
+            target="_blank"
+            class="mt-3 flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 text-sm font-semibold transition">
+                Bagikan Status via WhatsApp
             </a>
+
         </div>
 
         <a href="{{ route('home') }}" class="block text-center text-sm text-slate-400 mt-6 hover:text-emerald-600">

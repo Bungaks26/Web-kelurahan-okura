@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\LayananSurat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
+use App\Models\SiteSetting;
 
 class LayananSuratController extends Controller
 {
@@ -49,12 +51,19 @@ class LayananSuratController extends Controller
 
     public function index()
     {
+        if (SiteSetting::get('layanan_surat_aktif', '1') !== '1') {
+            abort(503, 'Layanan Surat sedang dinonaktifkan.');
+        }
         $jenisSurat = $this->jenisSurat;
         return view('frontend.layanan.index', compact('jenisSurat'));
     }
 
     public function create(?string $jenis = null)
     {
+        if (SiteSetting::get('layanan_surat_aktif', '1') !== '1') {
+            abort(503, 'Layanan Surat sedang dinonaktifkan.');
+        }
+
         if ($jenis && ! array_key_exists($jenis, $this->jenisSurat)) {
             abort(404);
         }
@@ -65,13 +74,17 @@ class LayananSuratController extends Controller
 
     public function store(Request $request)
     {
+        if (SiteSetting::get('layanan_surat_aktif', '1') !== '1') {
+        abort(503, 'Layanan Surat sedang dinonaktifkan.');
+        }
+
         $validated = $request->validate([
             'jenis_surat' => 'required|in:' . implode(',', array_keys($this->jenisSurat)),
             'nama_pemohon' => 'required|string|max:255',
             'nik'          => 'required|string|size:16',
             'no_hp'        => 'required|string|max:20',
             'keperluan'    => 'required|string|min:10',
-            'berkas.*'     => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'berkas.*'     => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:20048',
         ], [
             'nik.size' => 'NIK harus terdiri dari 16 digit.',
         ]);
@@ -84,12 +97,17 @@ class LayananSuratController extends Controller
         $berkasPaths = [];
         if ($request->hasFile('berkas')) {
             foreach ($request->file('berkas') as $file) {
-                $berkasPaths[] = $file->store('layanan-surat', 'public');
+                $berkasPaths[] = $file->store('layanan-surat', 'local');
             }
         }
         $validated['berkas_persyaratan'] = $berkasPaths;
 
         $surat = LayananSurat::create($validated);
+
+        session([
+            'resi_kode_tiket' => $surat->kode_tiket,
+            'resi_expires_at' => now()->addMinutes(15)->timestamp,
+        ]);
 
         return redirect()
             ->route('resi.show', $surat->kode_tiket)
@@ -119,6 +137,40 @@ class LayananSuratController extends Controller
                 ->withErrors(['kode_tiket' => 'Kode tiket atau NIK tidak ditemukan. Periksa kembali data Anda.']);
         }
 
-        return view('frontend.layanan.track-result', compact('surat'));
+        $downloadUrl = null;
+
+        if ($surat->status === 'selesai' && $surat->file_hasil) {
+            $downloadUrl = URL::temporarySignedRoute(
+                'layanan.download',
+                now()->addMinutes(10),
+                ['kodeTiket' => $surat->kode_tiket]
+            );
+        }
+
+        return view(
+            'frontend.layanan.track-result',
+            compact('surat', 'downloadUrl')
+        );
+    }
+
+    public function download(string $kodeTiket)
+    {
+        $surat = LayananSurat::where('kode_tiket', $kodeTiket)->firstOrFail();
+
+        abort_unless(
+            $surat->status === 'selesai' &&
+            $surat->file_hasil,
+            404
+        );
+
+        abort_unless(
+            \Storage::disk('local')->exists($surat->file_hasil),
+            404
+        );
+
+        return \Storage::disk('local')->download(
+            $surat->file_hasil,
+            'surat-' . $surat->kode_tiket . '.pdf'
+        );
     }
 }

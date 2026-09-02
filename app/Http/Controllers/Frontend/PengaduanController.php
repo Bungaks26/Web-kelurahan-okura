@@ -6,16 +6,24 @@ use App\Http\Controllers\Controller;
 use App\Models\Pengaduan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\SiteSetting;
 
 class PengaduanController extends Controller
 {
     public function create()
     {
+        if (SiteSetting::get('pengaduan_aktif', '1') !== '1') {
+            abort(503, 'Pengaduan sedang dinonaktifkan.');
+        }
+
         return view('frontend.pengaduan.create');
     }
 
     public function store(Request $request)
     {
+        if (SiteSetting::get('pengaduan_aktif', '1') !== '1') {
+            abort(503, 'Layanan Pengaduan sedang dinonaktifkan.');
+        }
         $validated = $request->validate([
             'nama_pelapor' => 'nullable|string|max:255',
             'nik'          => 'nullable|string|max:20',
@@ -38,10 +46,15 @@ class PengaduanController extends Controller
         }
 
         if ($request->hasFile('lampiran')) {
-            $validated['lampiran'] = $request->file('lampiran')->store('pengaduan', 'public');
+            $validated['lampiran'] = $request->file('lampiran')->store('pengaduan', 'local');
         }
 
         $pengaduan = Pengaduan::create($validated);
+
+        session([
+            'resi_kode_tiket' => $pengaduan->kode_tiket,
+            'resi_expires_at' => now()->addMinutes(15)->timestamp,
+        ]);
 
         return redirect()
             ->route('pengaduan.track.form')

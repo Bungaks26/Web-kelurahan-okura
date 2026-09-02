@@ -44,8 +44,12 @@
                 <p class="text-xs text-slate-400 mb-2">Berkas Persyaratan</p>
                 <div class="flex flex-wrap gap-2">
                     @foreach ($layananSurat->berkas_persyaratan as $berkas)
-                        <a href="{{ asset('storage/'.$berkas) }}" target="_blank"
-                           class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs hover:bg-slate-200">
+                        <a href="{{ route('admin.layanan-surat.berkas', [
+                            'layananSurat' => $layananSurat,
+                            'index' => $loop->index,
+                        ]) }}"
+                        target="_blank"
+                        class="text-sm text-emerald-700 font-medium underline">
                             📎 Berkas {{ $loop->iteration }}
                         </a>
                     @endforeach
@@ -56,7 +60,7 @@
         @if ($layananSurat->file_hasil)
             <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-4">
                 <p class="text-xs text-emerald-700 mb-1">File Surat Jadi</p>
-                <a href="{{ asset('storage/'.$layananSurat->file_hasil) }}" target="_blank" class="text-sm text-emerald-800 font-medium underline">
+                <a href="{{ route('admin.layanan-surat.file-hasil', $layananSurat) }}" class="text-sm text-emerald-800 font-medium underline">
                     Lihat / Unduh Surat
                 </a>
             </div>

@@ -45,11 +45,6 @@ class User extends Authenticatable
         return $this->hasMany(Pengumuman::class);
     }
 
-        public function isLurah(): bool
-    {
-        return $this->role === 'lurah';
-    }
-
     public function isStaf(): bool
     {
         return $this->role === 'staf';
@@ -62,7 +57,7 @@ class User extends Authenticatable
      */
     public function canApprove(): bool
     {
-        return in_array($this->role, ['super_admin', 'lurah']);
+        return $this->role === 'super_admin';
     }
 }
 

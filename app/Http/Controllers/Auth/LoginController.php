@@ -12,7 +12,11 @@ class LoginController extends Controller
     public function showLoginForm()
     {
         if (Auth::check()) {
-            return redirect()->route('admin.dashboard');
+            $redirectRoute = Auth::user()->isSuperAdmin()
+                ? 'admin.dashboard'
+                : 'staf.dashboard';
+
+            return redirect()->route($redirectRoute);
         }
 
         return view('auth.login');
@@ -35,8 +39,16 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('admin.dashboard'))
-            ->with('success', 'Selamat datang kembali, ' . Auth::user()->name . '!');
+        $redirectRoute = Auth::user()->isSuperAdmin()
+            ? 'admin.dashboard'
+            : 'staf.dashboard';
+
+        return redirect()
+            ->intended(route($redirectRoute))
+            ->with(
+                'success',
+                'Selamat datang kembali, ' . Auth::user()->name . '!'
+            );
     }
 
     public function logout(Request $request)

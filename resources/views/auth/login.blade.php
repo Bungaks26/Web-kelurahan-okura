@@ -14,8 +14,8 @@
     <div class="w-full max-w-md">
         {{-- Logo --}}
         <div class="text-center mb-8">
-            <div class="w-14 h-14 rounded-2xl bg-emerald-600 flex items-center justify-center text-white font-bold text-xl mx-auto mb-4">
-                TO
+            <div class="flex justify-center mb-4">
+                <img src="{{ asset('images/logo2.png') }}" alt="Logo Kelurahan Tebing Tinggi Okura" class="w-20 h-20 object-contain">
             </div>
             <h1 class="text-white font-bold text-lg">Kelurahan Tebing Tinggi Okura</h1>
             <p class="text-slate-400 text-sm mt-1">Portal Administrasi</p>

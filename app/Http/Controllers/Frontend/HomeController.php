@@ -41,6 +41,8 @@ class HomeController extends Controller
 
         $galeris = Galeri::latest()->take(6)->get();
 
+        $siteSettings = SiteSetting::pluck('value', 'key')->toArray();
+
         return view('frontend.index', compact(
             'banners',
             'wisatas',

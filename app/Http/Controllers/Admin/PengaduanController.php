@@ -64,12 +64,12 @@ class PengaduanController extends Controller
     }
 
     public function exportExcel(Request $request)
-{
-    return Excel::download(
-        new PengaduanExport($request->status, $request->tanggal_mulai, $request->tanggal_selesai),
-        'rekap-pengaduan-' . now()->format('Ymd-His') . '.xlsx'
-    );
-}
+    {
+        return Excel::download(
+            new PengaduanExport($request->status, $request->tanggal_mulai, $request->tanggal_selesai),
+            'rekap-pengaduan-' . now()->format('Ymd-His') . '.xlsx'
+        );
+    }
 
     public function exportPdf(Request $request)
     {
@@ -114,7 +114,7 @@ class PengaduanController extends Controller
         $validated['status'] = 'diterima';
 
         if ($request->hasFile('lampiran')) {
-            $validated['lampiran'] = $request->file('lampiran')->store('pengaduan', 'public');
+            $validated['lampiran'] = $request->file('lampiran')->store('pengaduan', 'local');
         }
 
         $pengaduan = Pengaduan::create($validated);
@@ -125,7 +125,7 @@ class PengaduanController extends Controller
     public function destroy(Pengaduan $pengaduan)
     {
         if ($pengaduan->lampiran) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($pengaduan->lampiran);
+            \Illuminate\Support\Facades\Storage::disk('local')->delete($pengaduan->lampiran);
         }
 
         $pengaduan->delete();

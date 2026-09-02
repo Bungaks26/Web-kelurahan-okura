@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Exports\PengaduanExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 
 class AdminPengaduanController extends Controller
 {
@@ -63,6 +64,18 @@ class AdminPengaduanController extends Controller
             ->with('success', 'Status pengaduan berhasil diperbarui.');
     }
 
+    public function lampiran(Pengaduan $pengaduan)
+    {
+        abort_unless($pengaduan->lampiran, 404);
+
+        abort_unless(
+            Storage::disk('local')->exists($pengaduan->lampiran),
+            404
+        );
+
+        return Storage::disk('local')->response($pengaduan->lampiran);
+    }
+
     public function exportExcel(Request $request)
     {
         return Excel::download(
@@ -102,7 +115,7 @@ class AdminPengaduanController extends Controller
             'kategori'     => 'required|in:infrastruktur,sosial,keamanan,lingkungan,lainnya',
             'judul_aduan'  => 'required|string|max:255',
             'isi_aduan'    => 'required|string|min:20',
-            'lampiran'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'lampiran'     => 'nullable|image|mimes:jpg,jpeg,png|max:20048',
         ]);
 
         $validated['is_anonim'] = $request->boolean('is_anonim');
@@ -114,7 +127,7 @@ class AdminPengaduanController extends Controller
         $validated['status'] = 'diterima';
 
         if ($request->hasFile('lampiran')) {
-            $validated['lampiran'] = $request->file('lampiran')->store('pengaduan', 'public');
+            $validated['lampiran'] = $request->file('lampiran')->store('pengaduan', 'local');
         }
 
         $pengaduan = Pengaduan::create($validated);
@@ -125,7 +138,7 @@ class AdminPengaduanController extends Controller
     public function destroy(Pengaduan $pengaduan)
     {
         if ($pengaduan->lampiran) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($pengaduan->lampiran);
+            \Illuminate\Support\Facades\Storage::disk('local')->delete($pengaduan->lampiran);
         }
 
         $pengaduan->delete();
