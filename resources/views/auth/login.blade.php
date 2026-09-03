@@ -60,9 +60,16 @@
 
                 <div class="flex items-center justify-between">
                     <label class="flex items-center gap-2 text-sm text-slate-600">
-                        <input type="checkbox" name="remember" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+                        <input type="checkbox"
+                            name="remember"
+                            class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
                         Ingat saya
                     </label>
+
+                    <a href="{{ route('password.request') }}"
+                    class="text-sm font-medium text-emerald-600 hover:text-emerald-700">
+                        Lupa Password?
+                    </a>
                 </div>
 
                 <button type="submit"

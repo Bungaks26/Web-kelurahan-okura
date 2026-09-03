@@ -18,6 +18,7 @@ use App\Http\Controllers\Frontend\AgendaController as FrontendAgendaController;
 
 // Import Controllers - Auth
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\PasswordResetController;
 
 // Import Controllers - Admin
 use App\Http\Controllers\Admin\DashboardController;
@@ -37,6 +38,7 @@ use App\Http\Controllers\Admin\SocialPostController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\JanjiTemuController as AdminJanjiTemuController;
 use App\Http\Controllers\Admin\TentangKknController;
+use App\Http\Controllers\Admin\UserController;
 
 // Import Controllers - Staff
 use App\Http\Controllers\Staf\DashboardController as StafDashboardController;
@@ -147,6 +149,21 @@ Route::post('/admin/login', [LoginController::class, 'login'])
     ->name('admin.login.submit');
 Route::post('/admin/logout', [LoginController::class, 'logout'])->name('admin.logout');
 
+// lupa password
+Route::get('/admin/forgot-password', [PasswordResetController::class, 'requestForm'])
+    ->name('password.request');
+
+Route::post('/admin/forgot-password', [PasswordResetController::class, 'sendResetLink'])
+    ->middleware('throttle:login')
+    ->name('password.email');
+
+Route::get('/admin/reset-password/{token}', [PasswordResetController::class, 'resetForm'])
+    ->name('password.reset');
+
+Route::post('/admin/reset-password', [PasswordResetController::class, 'resetPassword'])
+    ->middleware('throttle:login')
+    ->name('password.update');
+
 /*
 |--------------------------------------------------------------------------
 | ADMIN ROUTES
@@ -157,6 +174,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->middleware('super_admin')
         ->name('dashboard');
+
+    // Manajemen Pengguna
+    Route::resource('pengguna', UserController::class)
+        ->parameters(['pengguna' => 'user'])
+        ->except(['show'])
+        ->middleware('super_admin');
 
     // Emergency Contact
     Route::resource('emergency-contact', EmergencyContactController::class)
