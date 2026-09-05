@@ -43,6 +43,7 @@ use App\Http\Controllers\Admin\UserController;
 // Import Controllers - Staff
 use App\Http\Controllers\Staf\DashboardController as StafDashboardController;
 use App\Http\Controllers\Admin\TentangKknController as AdminTentangKknController;
+use App\Http\Controllers\Staf\WisataController as StafWisataController;
 
 /*
 |--------------------------------------------------------------------------
@@ -201,6 +202,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::resource('pengumuman', PengumumanController::class);
 
     // Wisata
+    Route::put('wisata/{wisata}/approve', [AdminWisataController::class, 'approve'])
+        ->name('wisata.approve');
     Route::resource('wisata', AdminWisataController::class)
         ->parameters([
             'wisata' => 'wisata',
@@ -341,7 +344,8 @@ Route::prefix('staf')
             ->except(['show']);
 
         // Potensi
-        Route::resource('wisata', AdminWisataController::class);
+        Route::resource('wisata', StafWisataController::class)
+            ->only(['index', 'create', 'store']);
 
         Route::resource('umkm', AdminUmkmController::class);
 
