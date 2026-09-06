@@ -57,9 +57,7 @@ class PengaduanController extends Controller
         ]);
 
         return redirect()
-            ->route('pengaduan.track.form')
-            ->with('success', "Pengaduan berhasil dikirim! Kode tiket Anda: {$pengaduan->kode_tiket}. Simpan kode ini untuk melacak status.")
-            ->with('kode_tiket', $pengaduan->kode_tiket);
+            ->route('resi.show', $pengaduan->kode_tiket);
     }
 
     public function trackForm()
