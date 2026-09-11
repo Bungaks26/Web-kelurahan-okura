@@ -212,6 +212,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     // UMKM
     Route::resource('umkm', AdminUmkmController::class);
 
+    // Janji Temu Admin
     Route::get('/janji-temu', [AdminJanjiTemuController::class, 'index'])
         ->name('janji-temu.index');
 
@@ -221,6 +222,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::put('/janji-temu/{janjiTemu}', [AdminJanjiTemuController::class, 'update'])
         ->middleware('can_approve')
         ->name('janji-temu.update');
+
+    Route::delete('/janji-temu/{janjiTemu}', [AdminJanjiTemuController::class, 'destroy'])
+        ->middleware('super_admin')
+        ->name('janji-temu.destroy');
 
     // Layanan Surat Admin
     Route::get('/layanan-surat', [AdminLayananSuratController::class, 'index'])

@@ -178,16 +178,41 @@
 
                             <td class="px-5 py-4 text-right">
 
-                                <a
-                                    href="{{ route(
-                                        auth()->user()->role === 'staf'
-                                            ? 'staf.janji-temu.show'
-                                            : 'admin.janji-temu.show',
-                                        $janjiTemu
-                                    ) }}"
-                                    class="text-emerald-600 hover:text-emerald-700 font-semibold text-sm">
-                                    Detail
-                                </a>
+                                <div class="flex items-center justify-end gap-3">
+
+                                    <a
+                                        href="{{ route(
+                                            auth()->user()->role === 'staf'
+                                                ? 'staf.janji-temu.show'
+                                                : 'admin.janji-temu.show',
+                                            $janjiTemu
+                                        ) }}"
+                                        class="text-emerald-600 hover:text-emerald-700 font-semibold text-sm">
+                                        Detail
+                                    </a>
+
+                                    @if(auth()->user()->role === 'super_admin')
+
+                                        <form
+                                            action="{{ route('admin.janji-temu.destroy', $janjiTemu) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('Apakah kamu yakin ingin menghapus pengajuan janji temu ini? Data yang sudah dihapus tidak dapat dikembalikan.')"
+                                            class="inline">
+
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button
+                                                type="submit"
+                                                class="text-red-600 hover:text-red-700 font-semibold text-sm">
+                                                Hapus
+                                            </button>
+
+                                        </form>
+
+                                    @endif
+
+                                </div>
 
                             </td>
 
